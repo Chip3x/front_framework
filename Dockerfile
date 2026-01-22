@@ -1,32 +1,43 @@
-FROM python:3.12.0a4-alpine3.17
+FROM python:3.12-alpine3.23
 
-# update apk repo
-RUN echo "https://dl-4.alpinelinux.org/alpine/v3.10/main" >> /etc/apk/repositories && \
-    echo "https://dl-4.alpinelinux.org/alpine/v3.10/community" >> /etc/apk/repositories
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    ALLURE_VERSION=2.36.0
 
-# install chromedriver
-RUN apk update
-RUN apk add --no-cache chromium chromium-chromedriver tzdata
+# System deps:
+# - chromium + chromedriver for UI tests
+# - openjdk for Allure CLI
+# - fonts/libs for stable headless Chromium
+RUN apk add --no-cache \
+      bash \
+      curl \
+      tar \
+      tzdata \
+      openjdk17-jre-headless \
+      chromium \
+      chromium-chromedriver \
+      nss \
+      freetype \
+      harfbuzz \
+      ttf-freefont \
+    && python -m pip install --upgrade pip
 
-# Get all the prereqs
-RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
-RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-2.30-r0.apk
-RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-bin-2.30-r0.apk
+# Install Allure Commandline (new version to avoid "titlePath" schema errors)
+RUN curl -fsSL -o /tmp/allure.tgz \
+      "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${ALLURE_VERSION}/allure-commandline-${ALLURE_VERSION}.tgz" \
+    && mkdir -p /opt \
+    && tar -xzf /tmp/allure.tgz -C /opt \
+    && ln -sf "/opt/allure-${ALLURE_VERSION}/bin/allure" /usr/local/bin/allure \
+    && rm -f /tmp/allure.tgz
 
-ARG ALLURE_VERSION=2.13.8
-
-RUN apk update && \
-    apk add --no-cache openjdk11-jre curl tar && \
-    curl -fsSL -o /tmp/allure.tgz \
-      "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${ALLURE_VERSION}/allure-commandline-${ALLURE_VERSION}.tgz" && \
-    tar -xzf /tmp/allure.tgz -C /opt/ && \
-    ln -sf "/opt/allure-${ALLURE_VERSION}/bin/allure" /usr/bin/allure && \
-    rm -f /tmp/allure.tgz
+# Ensure chromium command exists under common names
+RUN if [ -x /usr/bin/chromium-browser ] && [ ! -e /usr/bin/chromium ]; then ln -s /usr/bin/chromium-browser /usr/bin/chromium; fi \
+    && if [ -x /usr/bin/chromium ] && [ ! -e /usr/bin/chromium-browser ]; then ln -s /usr/bin/chromium /usr/bin/chromium-browser; fi
 
 WORKDIR /usr/workspace
 
-# Copy the dependencies file to the working directory
-COPY ./requirements.txt /usr/workspace
+COPY requirements.txt /usr/workspace/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-RUN pip3 install -r requirements.txt
+# Optional (keeps image runnable without bind mount; harmless with bind mount)
+COPY . /usr/workspace

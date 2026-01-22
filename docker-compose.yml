@@ -1,15 +1,33 @@
-version: '3.7'
-
 services:
   regression:
-    image: python:3.12.0a4-alpine3.17
+    image: front-framework-ui:latest
     build:
       context: .
       dockerfile: Dockerfile
+    working_dir: /usr/workspace
     volumes:
       - ./:/usr/workspace
-    command: /bin/sh -c "ls -la && pytest -sv --alluredir=allure-results"
-    working_dir: /usr/workspace
     environment:
-      - LOGIN=${LOGIN}
-      - PASSWORD=${PASSWORD}
+      LOGIN: ${LOGIN}
+      PASSWORD: ${PASSWORD}
+    user: "${UID:-0}:${GID:-0}"
+    shm_size: "2gb"
+    command: >
+      sh -lc "
+        mkdir -p /usr/workspace/allure-results &&
+        pytest -m regression --alluredir=/usr/workspace/allure-results
+      "
+
+  allure:
+    image: front-framework-ui:latest
+    working_dir: /usr/workspace
+    volumes:
+      - ./:/usr/workspace
+    user: "${UID:-0}:${GID:-0}"
+    command: >
+      sh -lc "
+        rm -rf /usr/workspace/allure-report &&
+        mkdir -p /usr/workspace/allure-report &&
+        allure generate /usr/workspace/allure-results --clean -o /usr/workspace/allure-report &&
+        touch /usr/workspace/allure-report/.nojekyll
+      "

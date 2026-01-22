@@ -1,4 +1,4 @@
-name: UI Tests
+name: UI Tests + Allure Report
 
 on:
   push:
@@ -6,10 +6,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  ui-tests:
+  test-and-build-report:
     runs-on: ubuntu-latest
 
     env:
@@ -19,6 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Export UID/GID for Docker (fix permissions)
+        run: |
+          echo "UID=$(id -u)" >> $GITHUB_ENV
+          echo "GID=$(id -g)" >> $GITHUB_ENV
 
       - name: Run UI tests via Docker Compose
         run: |
@@ -28,18 +38,27 @@ jobs:
       - name: Generate Allure report
         if: always()
         run: |
-          docker compose run --rm -w /usr/workspace regression sh -lc \
-            "allure generate /usr/workspace/allure-results --clean -o /usr/workspace/allure-report"
+          docker compose run --rm allure
           test -f allure-report/index.html
-          # чтобы GitHub Pages не пытался обрабатывать как Jekyll-сайт
-          touch allure-report/.nojekyll
 
-      - name: Deploy to GitHub Pages (gh-pages)
-        # не падаем, если отчёт не сгенерировался (например, allure не установился/не запускался)
-        if: always() && hashFiles('allure-report/index.html') != ''
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload Pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: allure-report
-          clean: true
+          path: allure-report
+
+      - name: Cleanup containers
+        if: always()
+        run: docker compose down -v --remove-orphans
+
+  deploy:
+    needs: test-and-build-report
+    if: always()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
