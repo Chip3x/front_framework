@@ -1,0 +1,320 @@
+{
+  "uid" : "e8680700ed9025d0",
+  "name" : "Change Employee ID",
+  "fullName" : "tests.test_feature_profile.TestPersonaProfile#test_change_employee_id",
+  "historyId" : "57d89a5fc36068a7f9be1cd7b568dda4",
+  "time" : {
+    "start" : 1769093236650,
+    "stop" : 1769093251706,
+    "duration" : 15056
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "setup",
+    "time" : {
+      "start" : 1769093236649,
+      "stop" : 1769093236649,
+      "duration" : 0
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  }, {
+    "name" : "driver",
+    "time" : {
+      "start" : 1769093236137,
+      "stop" : 1769093236649,
+      "duration" : 512
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "Open https://opensource-demo.orangehrmlive.com/web/index.php/auth/login page",
+      "time" : {
+        "start" : 1769093236650,
+        "stop" : 1769093237765,
+        "duration" : 1115
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : false
+    }, {
+      "name" : "Enter username",
+      "time" : {
+        "start" : 1769093237766,
+        "stop" : 1769093238902,
+        "duration" : 1136
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ {
+        "name" : "login",
+        "value" : "'Admin'"
+      } ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : true
+    }, {
+      "name" : "Enter password",
+      "time" : {
+        "start" : 1769093238903,
+        "stop" : 1769093238998,
+        "duration" : 95
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ {
+        "name" : "password",
+        "value" : "'admin123'"
+      } ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : true
+    }, {
+      "name" : "Submit button",
+      "time" : {
+        "start" : 1769093238998,
+        "stop" : 1769093239079,
+        "duration" : 81
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : false
+    }, {
+      "name" : "Click on 'My info' link",
+      "time" : {
+        "start" : 1769093239079,
+        "stop" : 1769093245095,
+        "duration" : 6016
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : false
+    }, {
+      "name" : "The load spinner competed",
+      "time" : {
+        "start" : 1769093245095,
+        "stop" : 1769093248194,
+        "duration" : 3099
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : false
+    }, {
+      "name" : "Change Employee ID to '234'",
+      "time" : {
+        "start" : 1769093248194,
+        "stop" : 1769093248384,
+        "duration" : 190
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : false
+    }, {
+      "name" : "Save personal details changes",
+      "time" : {
+        "start" : 1769093248384,
+        "stop" : 1769093248465,
+        "duration" : 81
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : false
+    }, {
+      "name" : "The load spinner competed",
+      "time" : {
+        "start" : 1769093248465,
+        "stop" : 1769093251527,
+        "duration" : 3062
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : false
+    }, {
+      "name" : "Get current employee id",
+      "time" : {
+        "start" : 1769093251694,
+        "stop" : 1769093251706,
+        "duration" : 12
+      },
+      "status" : "passed",
+      "steps" : [ {
+        "name" : "Get current Employee ID",
+        "time" : {
+          "start" : 1769093251694,
+          "stop" : 1769093251706,
+          "duration" : 12
+        },
+        "status" : "passed",
+        "steps" : [ ],
+        "attachments" : [ ],
+        "parameters" : [ ],
+        "attachmentsCount" : 0,
+        "shouldDisplayMessage" : false,
+        "stepsCount" : 0,
+        "hasContent" : false
+      } ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 1,
+      "hasContent" : true
+    } ],
+    "attachments" : [ {
+      "uid" : "119166ee6cd34da3",
+      "name" : "Success",
+      "source" : "119166ee6cd34da3.png",
+      "type" : "image/png",
+      "size" : 160953
+    } ],
+    "parameters" : [ ],
+    "attachmentsCount" : 1,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 11,
+    "hasContent" : true
+  },
+  "afterStages" : [ {
+    "name" : "driver::0",
+    "time" : {
+      "start" : 1769093251707,
+      "stop" : 1769093251773,
+      "duration" : 66
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "Profile Functionality"
+  }, {
+    "name" : "severity",
+    "value" : "Critical"
+  }, {
+    "name" : "tag",
+    "value" : "smoke"
+  }, {
+    "name" : "parentSuite",
+    "value" : "tests"
+  }, {
+    "name" : "suite",
+    "value" : "test_feature_profile"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestPersonaProfile"
+  }, {
+    "name" : "host",
+    "value" : "c39a44b4f09c"
+  }, {
+    "name" : "thread",
+    "value" : "1-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "tests.test_feature_profile"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "employee_id",
+    "value" : "'234'"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "critical",
+    "retries" : [ ],
+    "categories" : [ ],
+    "history" : {
+      "statistic" : {
+        "failed" : 0,
+        "broken" : 1,
+        "skipped" : 0,
+        "passed" : 1,
+        "unknown" : 0,
+        "total" : 2
+      },
+      "items" : [ {
+        "uid" : "bb38e56a11454f50",
+        "status" : "broken",
+        "statusDetails" : "selenium.common.exceptions.SessionNotCreatedException: Message: session not created: Chrome instance exited. Examine ChromeDriver verbose log to determine the cause.; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#sessionnotcreatedexception\nStacktrace:\n#0 0x5557d7085b8e <unknown>\n#1 0x5557d6aa5d22 <unknown>\n#2 0x5557d6ade976 <unknown>\n#3 0x5557d6ad991a <unknown>\n#4 0x5557d6b25105 <unknown>\n#5 0x5557d6b249a9 <unknown>\n#6 0x5557d6b15de3 <unknown>\n#7 0x5557d6ae5f55 <unknown>\n#8 0x5557d6ae6b41 <unknown>\n#9 0x5557d704ad90 <unknown>\n#10 0x5557d704e048 <unknown>\n#11 0x5557d704dafa <unknown>\n#12 0x5557d704e4b5 <unknown>\n#13 0x5557d703a88b <unknown>\n#14 0x5557d704e817 <unknown>\n#15 0x5557d7022326 <unknown>\n#16 0x5557d70734a5 <unknown>\n#17 0x5557d707369c <unknown>\n#18 0x5557d7084eea <unknown>\n#19 0x7f7f004361f5 <unknown>",
+        "time" : {
+          "start" : 1769087319590,
+          "stop" : 1769087319590,
+          "duration" : 0
+        }
+      } ]
+    },
+    "tags" : [ "smoke" ]
+  },
+  "source" : "e8680700ed9025d0.json",
+  "parameterValues" : [ "'234'" ]
+}
