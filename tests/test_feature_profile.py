@@ -7,7 +7,7 @@ class TestPersonaProfile(BaseTest):
 
     @allure.title("Change Employee ID")
     @allure.severity("Critical")
-    @pytest.mark.parametrize("employee_id", ["234", "32vver212"])
+    @pytest.mark.parametrize("employee_id", ["234", "32ver212"])
     @pytest.mark.smoke
     def test_change_employee_id(self, employee_id):
         self.login_page.open()
