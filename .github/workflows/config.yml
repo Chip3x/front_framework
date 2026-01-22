@@ -21,6 +21,10 @@ jobs:
           ref: gh-pages
           path: ./.github/gh-pages
 
+      - name: Prepare Allure folders (host)
+        run: |
+          mkdir -p allure-results
+
       - name: Run UI-tests via Docker Compose
         id: run_tests
         continue-on-error: true
@@ -29,6 +33,12 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           docker compose up --build --exit-code-from regression
+
+      - name: Fix permissions for Allure folders
+        if: always()
+        run: |
+          sudo chown -R $USER:$USER allure-results || true
+          sudo chown -R $USER:$USER allure-report  || true
 
       - name: Copy history from gh-pages to allure-results
         if: always()
