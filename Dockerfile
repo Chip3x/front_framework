@@ -1,43 +1,37 @@
-FROM python:3.12-alpine3.23
+FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    ALLURE_VERSION=2.36.0
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    CHROME_BIN=/usr/bin/chromium \
+    CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
-# System deps:
-# - chromium + chromedriver for UI tests
-# - openjdk for Allure CLI
-# - fonts/libs for stable headless Chromium
-RUN apk add --no-cache \
-      bash \
-      curl \
-      tar \
-      tzdata \
-      openjdk17-jre-headless \
+ARG ALLURE_VERSION=2.36.0
+
+# System deps: Chromium + chromedriver + Java for Allure + basic tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
       chromium \
-      chromium-chromedriver \
-      nss \
-      freetype \
-      harfbuzz \
-      ttf-freefont \
-    && python -m pip install --upgrade pip
+      chromium-driver \
+      openjdk-17-jre-headless \
+      curl \
+      wget \
+      unzip \
+      ca-certificates \
+      tzdata \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Allure Commandline (new version to avoid "titlePath" schema errors)
-RUN curl -fsSL -o /tmp/allure.tgz \
+# Install Allure Commandline
+RUN curl -fsSL \
       "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${ALLURE_VERSION}/allure-commandline-${ALLURE_VERSION}.tgz" \
-    && mkdir -p /opt \
-    && tar -xzf /tmp/allure.tgz -C /opt \
-    && ln -sf "/opt/allure-${ALLURE_VERSION}/bin/allure" /usr/local/bin/allure \
+      -o /tmp/allure.tgz \
+    && mkdir -p /opt/allure \
+    && tar -xzf /tmp/allure.tgz -C /opt/allure \
+    && ln -sf "/opt/allure/allure-${ALLURE_VERSION}/bin/allure" /usr/bin/allure \
     && rm -f /tmp/allure.tgz
-
-# Ensure chromium command exists under common names
-RUN if [ -x /usr/bin/chromium-browser ] && [ ! -e /usr/bin/chromium ]; then ln -s /usr/bin/chromium-browser /usr/bin/chromium; fi \
-    && if [ -x /usr/bin/chromium ] && [ ! -e /usr/bin/chromium-browser ]; then ln -s /usr/bin/chromium /usr/bin/chromium-browser; fi
 
 WORKDIR /usr/workspace
 
 COPY requirements.txt /usr/workspace/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -U pip && pip install --no-cache-dir -r requirements.txt
 
-# Optional (keeps image runnable without bind mount; harmless with bind mount)
 COPY . /usr/workspace

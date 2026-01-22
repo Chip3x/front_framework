@@ -1,33 +1,27 @@
 services:
   regression:
-    image: front-framework-ui:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     working_dir: /usr/workspace
-    volumes:
-      - ./:/usr/workspace
+
+    # Важно: чтобы на GitHub Actions файлы создавались не под root
+    user: "${UID:-1000}:${GID:-1000}"
+
     environment:
       LOGIN: ${LOGIN}
       PASSWORD: ${PASSWORD}
-    user: "${UID:-0}:${GID:-0}"
-    shm_size: "2gb"
-    command: >
-      sh -lc "
-        mkdir -p /usr/workspace/allure-results &&
-        pytest -m regression --alluredir=/usr/workspace/allure-results
-      "
+      PYTHONPATH: /usr/workspace
 
-  allure:
-    image: front-framework-ui:latest
-    working_dir: /usr/workspace
+    shm_size: "2gb"
+
     volumes:
-      - ./:/usr/workspace
-    user: "${UID:-0}:${GID:-0}"
+      - .:/usr/workspace
+      - ./allure-results:/usr/workspace/allure-results
+      - ./allure-report:/usr/workspace/allure-report
+
     command: >
       sh -lc "
-        rm -rf /usr/workspace/allure-report &&
-        mkdir -p /usr/workspace/allure-report &&
-        allure generate /usr/workspace/allure-results --clean -o /usr/workspace/allure-report &&
-        touch /usr/workspace/allure-report/.nojekyll
+        mkdir -p /usr/workspace/allure-results /usr/workspace/allure-report &&
+        find /usr/workspace/allure-results -mindepth 1 -delete || true &&
+        find /usr/workspace/allure-report  -mindepth 1 -delete || true &&
+        pytest --alluredir=/usr/workspace/allure-results
       "

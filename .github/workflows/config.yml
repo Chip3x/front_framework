@@ -1,4 +1,4 @@
-name: UI Tests + Allure Report
+name: UI Tests
 
 on:
   push:
@@ -6,16 +6,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
+  contents: write
 
 jobs:
-  test-and-build-report:
+  ui-tests:
     runs-on: ubuntu-latest
 
     env:
@@ -25,10 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Export UID/GID for Docker (fix permissions)
+      - name: Prepare UID/GID and Allure folders
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
+          mkdir -p allure-results allure-report
+          chmod -R 777 allure-results allure-report
 
       - name: Run UI tests via Docker Compose
         run: |
@@ -38,27 +34,20 @@ jobs:
       - name: Generate Allure report
         if: always()
         run: |
-          docker compose run --rm allure
+          docker compose run --rm regression sh -lc \
+            "allure generate /usr/workspace/allure-results --clean -o /usr/workspace/allure-report"
           test -f allure-report/index.html
 
-      - name: Upload Pages artifact
+      - name: Deploy to GitHub Pages (gh-pages)
         if: always()
-        uses: actions/upload-pages-artifact@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: allure-report
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: allure-report
+          clean: true
 
-      - name: Cleanup containers
+      - name: Cleanup
         if: always()
-        run: docker compose down -v --remove-orphans
-
-  deploy:
-    needs: test-and-build-report
-    if: always()
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+        run: |
+          docker compose down -v --remove-orphans || true
