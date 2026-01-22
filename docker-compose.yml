@@ -1,27 +1,15 @@
+version: '3.7'
+
 services:
   regression:
-    build: .
-    working_dir: /usr/workspace
-
-    # Важно: чтобы на GitHub Actions файлы создавались не под root
-    user: "${UID:-1000}:${GID:-1000}"
-
-    environment:
-      LOGIN: ${LOGIN}
-      PASSWORD: ${PASSWORD}
-      PYTHONPATH: /usr/workspace
-
-    shm_size: "2gb"
-
+    image: ui-tests:local
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
-      - .:/usr/workspace
-      - ./allure-results:/usr/workspace/allure-results
-      - ./allure-report:/usr/workspace/allure-report
-
-    command: >
-      sh -lc "
-        mkdir -p /usr/workspace/allure-results /usr/workspace/allure-report &&
-        find /usr/workspace/allure-results -mindepth 1 -delete || true &&
-        find /usr/workspace/allure-report  -mindepth 1 -delete || true &&
-        pytest --alluredir=/usr/workspace/allure-results
-      "
+      - ./:/usr/workspace
+    working_dir: /usr/workspace
+    command: /bin/sh -c "ls -la && pytest -sv --alluredir=allure-results --clean-alluredir"
+    environment:
+      - LOGIN=${LOGIN}
+      - PASSWORD=${PASSWORD}

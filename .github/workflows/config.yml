@@ -1,9 +1,6 @@
 name: UI Tests
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+on: workflow_dispatch
 
 permissions:
   contents: write
@@ -12,42 +9,48 @@ jobs:
   ui-tests:
     runs-on: ubuntu-latest
 
-    env:
-      LOGIN: ${{ secrets.LOGIN }}
-      PASSWORD: ${{ secrets.PASSWORD }}
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Prepare UID/GID and Allure folders
-        run: |
-          echo "UID=$(id -u)" >> $GITHUB_ENV
-          echo "GID=$(id -g)" >> $GITHUB_ENV
-          mkdir -p allure-results allure-report
-          chmod -R 777 allure-results allure-report
-
-      - name: Run UI tests via Docker Compose
-        run: |
-          docker compose up --build --abort-on-container-exit --exit-code-from regression
+      - name: Checkout gh-pages (for Allure history)
         continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: ./.github/gh-pages
+
+      - name: Run UI-tests via Docker Compose
+        id: run_tests
+        continue-on-error: true
+        env:
+          LOGIN: ${{ secrets.LOGIN }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          docker compose up --build --exit-code-from regression
+
+      - name: Copy history from gh-pages to allure-results
+        if: always()
+        run: |
+          mkdir -p allure-results/history
+          if [ -d "./.github/gh-pages/history" ]; then
+            cp -R ./.github/gh-pages/history/* allure-results/history/ || true
+          fi
 
       - name: Generate Allure report
         if: always()
         run: |
-          docker compose run --rm regression sh -lc \
-            "allure generate /usr/workspace/allure-results --clean -o /usr/workspace/allure-report"
-          test -f allure-report/index.html
+          docker compose run --rm regression /bin/sh -c "allure generate allure-results --clean -o allure-report"
 
-      - name: Deploy to GitHub Pages (gh-pages)
+      - name: Deploy to GitHub Pages
         if: always()
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4.1.5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           folder: allure-report
           clean: true
+          clean-exclude: history
 
-      - name: Cleanup
-        if: always()
-        run: |
-          docker compose down -v --remove-orphans || true
+      - name: Fail job if tests failed
+        if: steps.run_tests.outcome == 'failure'
+        run: exit 1
