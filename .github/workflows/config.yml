@@ -19,6 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+
       - name: Run UI tests via Docker Compose
         run: |
           docker compose up --build --abort-on-container-exit --exit-code-from regression
